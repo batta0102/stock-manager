@@ -87,7 +87,11 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
       {stockFilter && (
         <View style={styles.filterBanner}>
           <Text style={styles.filterBannerText}>Filtre : {STOCK_FILTER_LABELS[stockFilter]}</Text>
-          <Pressable onPress={() => setStockFilter(null)} hitSlop={8}>
+          <Pressable
+            onPress={() => setStockFilter(null)}
+            style={styles.filterBannerClearButton}
+            hitSlop={8}
+          >
             <Text style={styles.filterBannerClear}>Réinitialiser</Text>
           </Pressable>
         </View>
@@ -172,6 +176,12 @@ const styles = StyleSheet.create({
   filterBannerText: {
     ...typography.bodyBold,
     color: colors.primary,
+  },
+  filterBannerClearButton: {
+    minHeight: 44,
+    minWidth: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   filterBannerClear: {
     ...typography.bodyBold,

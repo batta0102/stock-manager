@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: spacing.md,
     marginBottom: spacing.md,
+    minHeight: 44,
   },
   cardPressed: {
     opacity: 0.7,
