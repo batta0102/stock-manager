@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryChips from '../components/CategoryChips';
@@ -7,14 +7,29 @@ import ProductCard from '../components/ProductCard';
 import { ProductsScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
 import { colors, radii, spacing, typography } from '../theme/theme';
-import { Product } from '../types/product';
+import { getStockStatus, Product } from '../types/product';
 import { useDebouncedValue } from '../utils/useDebouncedValue';
 
-export default function ProductListScreen({ navigation }: ProductsScreenProps) {
+const STOCK_FILTER_LABELS: Record<'low' | 'out', string> = {
+  low: 'Stock faible',
+  out: 'Rupture de stock',
+};
+
+export default function ProductListScreen({ navigation, route }: ProductsScreenProps) {
   const products = useProductStore((state) => state.products);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [stockFilter, setStockFilter] = useState<'low' | 'out' | null>(null);
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
+
+  useEffect(() => {
+    const filter = route.params?.filter;
+    if (filter === 'low' || filter === 'out') {
+      setStockFilter(filter);
+    } else if (filter === 'all') {
+      setStockFilter(null);
+    }
+  }, [route.params?.filter]);
 
   const categories = useMemo(
     () => Array.from(new Set(products.map((product) => product.category))).sort(),
@@ -25,13 +40,14 @@ export default function ProductListScreen({ navigation }: ProductsScreenProps) {
     const query = debouncedQuery.trim().toLowerCase();
     return products.filter((product) => {
       const matchesCategory = !selectedCategory || product.category === selectedCategory;
+      const matchesStock = !stockFilter || getStockStatus(product) === stockFilter;
       const matchesQuery =
         query.length === 0 ||
         product.name.toLowerCase().includes(query) ||
         product.reference.toLowerCase().includes(query);
-      return matchesCategory && matchesQuery;
+      return matchesCategory && matchesStock && matchesQuery;
     });
-  }, [products, debouncedQuery, selectedCategory]);
+  }, [products, debouncedQuery, selectedCategory, stockFilter]);
 
   const handlePressProduct = useCallback(
     (product: Product) => {
@@ -68,6 +84,14 @@ export default function ProductListScreen({ navigation }: ProductsScreenProps) {
         />
       </View>
       <CategoryChips categories={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
+      {stockFilter && (
+        <View style={styles.filterBanner}>
+          <Text style={styles.filterBannerText}>Filtre : {STOCK_FILTER_LABELS[stockFilter]}</Text>
+          <Pressable onPress={() => setStockFilter(null)} hitSlop={8}>
+            <Text style={styles.filterBannerClear}>Réinitialiser</Text>
+          </Pressable>
+        </View>
+      )}
       <FlatList
         data={filteredProducts}
         keyExtractor={(item) => item.id}
@@ -133,6 +157,26 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.text,
     height: '100%',
+  },
+  filterBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.primaryMuted,
+  },
+  filterBannerText: {
+    ...typography.bodyBold,
+    color: colors.primary,
+  },
+  filterBannerClear: {
+    ...typography.bodyBold,
+    color: colors.primary,
+    textDecorationLine: 'underline',
   },
   listContent: {
     paddingHorizontal: spacing.lg,
