@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBadge from '../components/StatusBadge';
 import StockMovementModal from '../components/StockMovementModal';
@@ -34,8 +34,17 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
   const status = getStockStatus(product);
 
   const handleDelete = () => {
-    removeProduct(product.id);
-    navigation.goBack();
+    Alert.alert('Supprimer le produit', `Supprimer "${product.name}" ? Cette action est irréversible.`, [
+      { text: 'Annuler', style: 'cancel' },
+      {
+        text: 'Supprimer',
+        style: 'destructive',
+        onPress: () => {
+          removeProduct(product.id);
+          navigation.goBack();
+        },
+      },
+    ]);
   };
 
   const handleEdit = () => {
