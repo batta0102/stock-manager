@@ -1,6 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FormField from '../components/FormField';
 import { ProductFormScreenProps } from '../navigation/types';
 import { isReferenceTaken } from '../services/productService';
 import { useProductStore } from '../store/productStore';
@@ -85,80 +86,60 @@ export default function ProductFormScreen({ navigation, route }: ProductFormScre
     >
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.field}>
-            <Text style={styles.label}>Nom</Text>
-            <TextInput
-              value={name}
-              onChangeText={setName}
-              placeholder="Nom du produit"
-              placeholderTextColor={colors.textMuted}
-              style={[styles.input, errors.name && styles.inputError]}
-            />
-            {errors.name && <Text style={styles.error}>{errors.name}</Text>}
-          </View>
+          <FormField
+            label="Nom"
+            value={name}
+            onChangeText={setName}
+            placeholder="Nom du produit"
+            error={errors.name}
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Référence</Text>
-            <TextInput
-              value={reference}
-              onChangeText={setReference}
-              placeholder="Ex : ALM-013"
-              placeholderTextColor={colors.textMuted}
-              autoCapitalize="characters"
-              style={[styles.input, errors.reference && styles.inputError]}
-            />
-            {errors.reference && <Text style={styles.error}>{errors.reference}</Text>}
-          </View>
+          <FormField
+            label="Référence"
+            value={reference}
+            onChangeText={setReference}
+            placeholder="Ex : ALM-013"
+            autoCapitalize="characters"
+            error={errors.reference}
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Catégorie</Text>
-            <TextInput
-              value={category}
-              onChangeText={setCategory}
-              placeholder="Ex : Alimentaire"
-              placeholderTextColor={colors.textMuted}
-              style={[styles.input, errors.category && styles.inputError]}
-            />
-            {errors.category && <Text style={styles.error}>{errors.category}</Text>}
-          </View>
+          <FormField
+            label="Catégorie"
+            value={category}
+            onChangeText={setCategory}
+            placeholder="Ex : Alimentaire"
+            error={errors.category}
+          />
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Description</Text>
-            <TextInput
-              value={description}
-              onChangeText={setDescription}
-              placeholder="Description (optionnelle)"
-              placeholderTextColor={colors.textMuted}
-              multiline
-              numberOfLines={3}
-              style={[styles.input, styles.textArea]}
-            />
-          </View>
+          <FormField
+            label="Description"
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Description (optionnelle)"
+            multiline
+            numberOfLines={3}
+          />
 
           <View style={styles.row}>
-            <View style={[styles.field, styles.rowItem]}>
-              <Text style={styles.label}>Quantité initiale</Text>
-              <TextInput
+            <View style={styles.rowItem}>
+              <FormField
+                label="Quantité initiale"
                 value={quantity}
                 onChangeText={setQuantity}
                 placeholder="0"
-                placeholderTextColor={colors.textMuted}
                 keyboardType="number-pad"
-                style={[styles.input, errors.quantity && styles.inputError]}
+                error={errors.quantity}
               />
-              {errors.quantity && <Text style={styles.error}>{errors.quantity}</Text>}
             </View>
-            <View style={[styles.field, styles.rowItem]}>
-              <Text style={styles.label}>Seuil d'alerte</Text>
-              <TextInput
+            <View style={styles.rowItem}>
+              <FormField
+                label="Seuil d'alerte"
                 value={alertThreshold}
                 onChangeText={setAlertThreshold}
                 placeholder="0"
-                placeholderTextColor={colors.textMuted}
                 keyboardType="number-pad"
-                style={[styles.input, errors.alertThreshold && styles.inputError]}
+                error={errors.alertThreshold}
               />
-              {errors.alertThreshold && <Text style={styles.error}>{errors.alertThreshold}</Text>}
             </View>
           </View>
 
@@ -184,37 +165,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-  },
-  field: {
-    marginBottom: spacing.lg,
-  },
-  label: {
-    ...typography.bodyBold,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  input: {
-    minHeight: 44,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.md,
-    backgroundColor: colors.surface,
-    ...typography.body,
-    color: colors.text,
-  },
-  textArea: {
-    minHeight: 88,
-    paddingTop: spacing.sm,
-    textAlignVertical: 'top',
-  },
-  inputError: {
-    borderColor: colors.danger,
-  },
-  error: {
-    ...typography.caption,
-    color: colors.danger,
-    marginTop: spacing.xs,
   },
   row: {
     flexDirection: 'row',
