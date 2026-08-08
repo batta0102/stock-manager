@@ -101,6 +101,7 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
       <StockMovementModal
         visible={movementDirection !== null}
         direction={movementDirection ?? 'in'}
+        currentQuantity={product.quantity}
         onClose={() => setMovementDirection(null)}
         onConfirm={handleConfirmMovement}
       />

@@ -5,15 +5,23 @@ import { colors, radii, spacing, typography } from '../theme/theme';
 interface StockMovementModalProps {
   visible: boolean;
   direction: 'in' | 'out';
+  currentQuantity: number;
   onClose: () => void;
   onConfirm: (amount: number) => void;
 }
 
-export default function StockMovementModal({ visible, direction, onClose, onConfirm }: StockMovementModalProps) {
+export default function StockMovementModal({
+  visible,
+  direction,
+  currentQuantity,
+  onClose,
+  onConfirm,
+}: StockMovementModalProps) {
   const [value, setValue] = useState('');
 
   const parsed = Number.parseInt(value, 10);
-  const isValid = value.trim().length > 0 && Number.isInteger(parsed) && parsed > 0;
+  const exceedsStock = direction === 'out' && Number.isInteger(parsed) && parsed > currentQuantity;
+  const isValid = value.trim().length > 0 && Number.isInteger(parsed) && parsed > 0 && !exceedsStock;
 
   const handleClose = () => {
     setValue('');
@@ -40,7 +48,10 @@ export default function StockMovementModal({ visible, direction, onClose, onConf
             style={styles.input}
             autoFocus
           />
-          {value.trim().length > 0 && !isValid && (
+          {value.trim().length > 0 && exceedsStock && (
+            <Text style={styles.error}>La quantité dépasse le stock disponible ({currentQuantity}).</Text>
+          )}
+          {value.trim().length > 0 && !exceedsStock && !isValid && (
             <Text style={styles.error}>Saisissez un nombre entier positif.</Text>
           )}
           <View style={styles.actions}>
