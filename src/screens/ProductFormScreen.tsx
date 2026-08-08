@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useLayoutEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ export default function ProductFormScreen({ navigation, route }: ProductFormScre
   const addProduct = useProductStore((state) => state.addProduct);
   const editProduct = useProductStore((state) => state.editProduct);
   const editingProduct = editingId ? products.find((p) => p.id === editingId) : undefined;
+  const headerHeight = useHeaderHeight();
 
   const [name, setName] = useState(editingProduct?.name ?? '');
   const [reference, setReference] = useState(editingProduct?.reference ?? '');
@@ -81,8 +83,8 @@ export default function ProductFormScreen({ navigation, route }: ProductFormScre
   return (
     <KeyboardAvoidingView
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={headerHeight}
     >
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
