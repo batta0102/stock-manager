@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { Product, ProductInput } from '../types/product';
 import { applyProductChanges, applyStockDelta, createProduct } from '../services/productService';
+import { buildSeedProducts } from './seedProducts';
 
 interface ProductStoreState {
   products: Product[];
@@ -13,6 +14,7 @@ interface ProductStoreState {
   stockIn: (id: string, amount: number) => void;
   stockOut: (id: string, amount: number) => void;
   setHasHydrated: (value: boolean) => void;
+  seedIfEmpty: () => void;
 }
 
 export const useProductStore = create<ProductStoreState>()(
@@ -37,6 +39,8 @@ export const useProductStore = create<ProductStoreState>()(
           products: state.products.map((p) => (p.id === id ? applyStockDelta(p, -amount) : p)),
         })),
       setHasHydrated: (value) => set({ hasHydrated: value }),
+      seedIfEmpty: () =>
+        set((state) => (state.products.length === 0 ? { products: buildSeedProducts() } : {})),
     }),
     {
       name: 'stock-manager-products',
@@ -44,6 +48,7 @@ export const useProductStore = create<ProductStoreState>()(
       partialize: (state) => ({ products: state.products }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
+        state?.seedIfEmpty();
       },
     }
   )
