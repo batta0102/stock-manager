@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ProductFormScreenProps } from '../navigation/types';
@@ -8,17 +8,26 @@ import { colors, radii, spacing, typography } from '../theme/theme';
 
 type FormErrors = Partial<Record<'name' | 'reference' | 'category' | 'quantity' | 'alertThreshold', string>>;
 
-export default function ProductFormScreen({ navigation }: ProductFormScreenProps) {
+export default function ProductFormScreen({ navigation, route }: ProductFormScreenProps) {
+  const editingId = route.params?.productId;
   const products = useProductStore((state) => state.products);
   const addProduct = useProductStore((state) => state.addProduct);
+  const editProduct = useProductStore((state) => state.editProduct);
+  const editingProduct = editingId ? products.find((p) => p.id === editingId) : undefined;
 
-  const [name, setName] = useState('');
-  const [reference, setReference] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [alertThreshold, setAlertThreshold] = useState('');
+  const [name, setName] = useState(editingProduct?.name ?? '');
+  const [reference, setReference] = useState(editingProduct?.reference ?? '');
+  const [description, setDescription] = useState(editingProduct?.description ?? '');
+  const [category, setCategory] = useState(editingProduct?.category ?? '');
+  const [quantity, setQuantity] = useState(editingProduct ? String(editingProduct.quantity) : '');
+  const [alertThreshold, setAlertThreshold] = useState(
+    editingProduct ? String(editingProduct.alertThreshold) : ''
+  );
   const [errors, setErrors] = useState<FormErrors>({});
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: editingProduct ? 'Modifier le produit' : 'Nouveau produit' });
+  }, [navigation, editingProduct]);
 
   const validate = (): FormErrors => {
     const nextErrors: FormErrors = {};
@@ -27,7 +36,7 @@ export default function ProductFormScreen({ navigation }: ProductFormScreenProps
 
     if (!reference.trim()) {
       nextErrors.reference = 'La référence est requise.';
-    } else if (isReferenceTaken(products, reference)) {
+    } else if (isReferenceTaken(products, reference, editingProduct?.id)) {
       nextErrors.reference = 'Cette référence existe déjà.';
     }
 
@@ -51,14 +60,20 @@ export default function ProductFormScreen({ navigation }: ProductFormScreenProps
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
-    addProduct({
+    const input = {
       name: name.trim(),
       reference: reference.trim(),
       description: description.trim(),
       category: category.trim(),
       quantity: Number(quantity),
       alertThreshold: Number(alertThreshold),
-    });
+    };
+
+    if (editingProduct) {
+      editProduct(editingProduct.id, input);
+    } else {
+      addProduct(input);
+    }
     navigation.goBack();
   };
 
@@ -151,7 +166,7 @@ export default function ProductFormScreen({ navigation }: ProductFormScreenProps
             onPress={handleSubmit}
             style={({ pressed }) => [styles.submitButton, pressed && styles.submitButtonPressed]}
           >
-            <Text style={styles.submitButtonText}>Enregistrer</Text>
+            <Text style={styles.submitButtonText}>{editingProduct ? 'Mettre à jour' : 'Enregistrer'}</Text>
           </Pressable>
         </ScrollView>
       </SafeAreaView>

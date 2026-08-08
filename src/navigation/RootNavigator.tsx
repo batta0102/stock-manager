@@ -17,7 +17,7 @@ export default function RootNavigator() {
     >
       <Stack.Screen name="Tabs" component={TabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ title: 'Détail produit' }} />
-      <Stack.Screen name="ProductForm" component={ProductFormScreen} options={{ title: 'Produit' }} />
+      <Stack.Screen name="ProductForm" component={ProductFormScreen} options={{ title: 'Nouveau produit' }} />
     </Stack.Navigator>
   );
 }
