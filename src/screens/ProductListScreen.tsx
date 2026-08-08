@@ -1,15 +1,37 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import CategoryChips from '../components/CategoryChips';
 import ProductCard from '../components/ProductCard';
 import { ProductsScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
-import { colors, spacing, typography } from '../theme/theme';
+import { colors, radii, spacing, typography } from '../theme/theme';
 import { Product } from '../types/product';
+import { useDebouncedValue } from '../utils/useDebouncedValue';
 
 export default function ProductListScreen({ navigation }: ProductsScreenProps) {
   const products = useProductStore((state) => state.products);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const debouncedQuery = useDebouncedValue(searchQuery, 300);
+
+  const categories = useMemo(
+    () => Array.from(new Set(products.map((product) => product.category))).sort(),
+    [products]
+  );
+
+  const filteredProducts = useMemo(() => {
+    const query = debouncedQuery.trim().toLowerCase();
+    return products.filter((product) => {
+      const matchesCategory = !selectedCategory || product.category === selectedCategory;
+      const matchesQuery =
+        query.length === 0 ||
+        product.name.toLowerCase().includes(query) ||
+        product.reference.toLowerCase().includes(query);
+      return matchesCategory && matchesQuery;
+    });
+  }, [products, debouncedQuery, selectedCategory]);
 
   const handlePressProduct = useCallback(
     (product: Product) => {
@@ -34,14 +56,28 @@ export default function ProductListScreen({ navigation }: ProductsScreenProps) {
           <Ionicons name="add" size={24} color={colors.white} />
         </Pressable>
       </View>
+      <View style={styles.searchWrapper}>
+        <Ionicons name="search" size={18} color={colors.textMuted} style={styles.searchIcon} />
+        <TextInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="Rechercher par nom ou référence"
+          placeholderTextColor={colors.textMuted}
+          style={styles.searchInput}
+          autoCorrect={false}
+        />
+      </View>
+      <CategoryChips categories={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
       <FlatList
-        data={products}
+        data={filteredProducts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ProductCard product={item} onPress={handlePressProduct} />}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>Aucun produit pour le moment.</Text>
+            <Text style={styles.emptyText}>
+              {products.length === 0 ? 'Aucun produit pour le moment.' : 'Aucun résultat pour ces filtres.'}
+            </Text>
           </View>
         }
       />
@@ -76,6 +112,27 @@ const styles = StyleSheet.create({
   },
   addButtonPressed: {
     opacity: 0.8,
+  },
+  searchWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+    paddingHorizontal: spacing.md,
+    height: 44,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  searchIcon: {
+    marginRight: spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    ...typography.body,
+    color: colors.text,
+    height: '100%',
   },
   listContent: {
     paddingHorizontal: spacing.lg,
