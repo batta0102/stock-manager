@@ -1,7 +1,8 @@
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import StatusBadge from '../components/StatusBadge';
+import StockMovementModal from '../components/StockMovementModal';
 import { ProductDetailScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
 import { colors, radii, spacing, typography } from '../theme/theme';
@@ -12,6 +13,9 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
   const { productId } = route.params;
   const product = useProductStore((state) => state.products.find((p) => p.id === productId));
   const removeProduct = useProductStore((state) => state.removeProduct);
+  const stockIn = useProductStore((state) => state.stockIn);
+  const stockOut = useProductStore((state) => state.stockOut);
+  const [movementDirection, setMovementDirection] = useState<'in' | 'out' | null>(null);
 
   useLayoutEffect(() => {
     if (product) {
@@ -38,6 +42,15 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
     navigation.navigate('ProductForm', { productId: product.id });
   };
 
+  const handleConfirmMovement = (amount: number) => {
+    if (movementDirection === 'in') {
+      stockIn(product.id, amount);
+    } else if (movementDirection === 'out') {
+      stockOut(product.id, amount);
+    }
+    setMovementDirection(null);
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -57,6 +70,21 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
 
         <View style={styles.actionsRow}>
           <Pressable
+            onPress={() => setMovementDirection('in')}
+            style={({ pressed }) => [styles.actionButton, styles.stockInButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.stockInButtonText}>Entrée (+)</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setMovementDirection('out')}
+            style={({ pressed }) => [styles.actionButton, styles.stockOutButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.stockOutButtonText}>Sortie (−)</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.actionsRow}>
+          <Pressable
             onPress={handleEdit}
             style={({ pressed }) => [styles.actionButton, styles.editButton, pressed && styles.pressed]}
           >
@@ -70,6 +98,12 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
           </Pressable>
         </View>
       </ScrollView>
+      <StockMovementModal
+        visible={movementDirection !== null}
+        direction={movementDirection ?? 'in'}
+        onClose={() => setMovementDirection(null)}
+        onConfirm={handleConfirmMovement}
+      />
     </SafeAreaView>
   );
 }
@@ -145,6 +179,7 @@ const styles = StyleSheet.create({
   actionsRow: {
     flexDirection: 'row',
     gap: spacing.md,
+    marginBottom: spacing.lg,
   },
   actionButton: {
     flex: 1,
@@ -169,5 +204,19 @@ const styles = StyleSheet.create({
   deleteButtonText: {
     ...typography.bodyBold,
     color: colors.danger,
+  },
+  stockInButton: {
+    backgroundColor: colors.successMuted,
+  },
+  stockInButtonText: {
+    ...typography.bodyBold,
+    color: colors.success,
+  },
+  stockOutButton: {
+    backgroundColor: colors.warningMuted,
+  },
+  stockOutButtonText: {
+    ...typography.bodyBold,
+    color: colors.warning,
   },
 });
