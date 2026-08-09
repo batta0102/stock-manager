@@ -6,7 +6,7 @@ import CategoryChips from '../components/CategoryChips';
 import ProductCard from '../components/ProductCard';
 import { ProductsScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
-import { colors, radii, spacing, typography } from '../theme/theme';
+import { colors, radii, shadows, spacing, typography } from '../theme/theme';
 import { getStockStatus, Product } from '../types/product';
 import { useDebouncedValue } from '../utils/useDebouncedValue';
 
@@ -49,6 +49,8 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
     });
   }, [products, debouncedQuery, selectedCategory, stockFilter]);
 
+  const hasActiveFilters = selectedCategory !== null || stockFilter !== null || searchQuery.trim().length > 0;
+
   const handlePressProduct = useCallback(
     (product: Product) => {
       navigation.navigate('ProductDetail', { productId: product.id });
@@ -60,10 +62,21 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
     navigation.navigate('ProductForm', undefined);
   }, [navigation]);
 
+  const clearFilters = useCallback(() => {
+    setSearchQuery('');
+    setSelectedCategory(null);
+    setStockFilter(null);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>Produits</Text>
+        <View>
+          <Text style={styles.title}>Produits</Text>
+          <Text style={styles.subtitle}>
+            {products.length} produit{products.length > 1 ? 's' : ''} au catalogue
+          </Text>
+        </View>
         <Pressable
           onPress={handlePressAdd}
           style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
@@ -103,9 +116,21 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={
           <View style={styles.empty}>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons
+                name={products.length === 0 ? 'cube-outline' : 'search-outline'}
+                size={28}
+                color={colors.textFaint}
+              />
+            </View>
             <Text style={styles.emptyText}>
               {products.length === 0 ? 'Aucun produit pour le moment.' : 'Aucun résultat pour ces filtres.'}
             </Text>
+            {hasActiveFilters && products.length > 0 && (
+              <Pressable onPress={clearFilters} style={styles.emptyClearButton} hitSlop={8}>
+                <Text style={styles.emptyClearText}>Réinitialiser les filtres</Text>
+              </Pressable>
+            )}
           </View>
         }
       />
@@ -123,12 +148,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.lg,
   },
   title: {
-    ...typography.title,
+    ...typography.largeTitle,
     color: colors.text,
+  },
+  subtitle: {
+    ...typography.caption,
+    color: colors.textMuted,
+    marginTop: 2,
   },
   addButton: {
     width: 44,
@@ -137,21 +167,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadows.sm,
   },
   addButtonPressed: {
-    opacity: 0.8,
+    backgroundColor: colors.primaryDark,
   },
   searchWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: spacing.lg,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
     paddingHorizontal: spacing.md,
     height: 44,
-    borderRadius: radii.md,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceAlt,
   },
   searchIcon: {
     marginRight: spacing.sm,
@@ -186,18 +215,37 @@ const styles = StyleSheet.create({
   filterBannerClear: {
     ...typography.bodyBold,
     color: colors.primary,
-    textDecorationLine: 'underline',
   },
   listContent: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xl,
+    flexGrow: 1,
   },
   empty: {
+    flex: 1,
     paddingTop: spacing.xxl,
     alignItems: 'center',
+  },
+  emptyIconWrap: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.surfaceAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
   },
   emptyText: {
     ...typography.body,
     color: colors.textMuted,
+  },
+  emptyClearButton: {
+    marginTop: spacing.md,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  emptyClearText: {
+    ...typography.bodyBold,
+    color: colors.primary,
   },
 });

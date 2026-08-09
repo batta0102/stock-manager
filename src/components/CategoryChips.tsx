@@ -42,26 +42,23 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
-    paddingBottom: spacing.sm,
+    paddingBottom: spacing.md,
   },
   chip: {
     minHeight: 44,
     paddingHorizontal: spacing.md,
     justifyContent: 'center',
     borderRadius: radii.pill,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
   },
   chipActive: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary,
   },
   chipPressed: {
-    opacity: 0.7,
+    opacity: 0.75,
   },
   chipLabel: {
-    ...typography.bodyBold,
+    ...typography.captionBold,
     color: colors.textMuted,
   },
   chipLabelActive: {
