@@ -5,7 +5,7 @@ import CategoryBarChart from '../components/CategoryBarChart';
 import StatCard from '../components/StatCard';
 import { DashboardScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
-import { colors, radii, spacing, typography } from '../theme/theme';
+import { colors, radii, shadows, spacing, typography } from '../theme/theme';
 import { getStockStatus } from '../types/product';
 
 export default function DashboardScreen({ navigation }: DashboardScreenProps) {
@@ -36,22 +36,28 @@ export default function DashboardScreen({ navigation }: DashboardScreenProps) {
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Tableau de bord</Text>
+        <Text style={styles.subtitle}>Vue d'ensemble de votre stock</Text>
+
         <View style={styles.statsRow}>
           <StatCard
             label="Produits"
             value={stats.total}
+            icon="cube-outline"
+            tone="primary"
             onPress={() => navigation.navigate('Products', { filter: 'all' })}
           />
           <StatCard
             label="Rupture"
             value={stats.outOfStock}
-            accentColor={colors.danger}
+            icon="alert-circle-outline"
+            tone="danger"
             onPress={() => navigation.navigate('Products', { filter: 'out' })}
           />
           <StatCard
             label="Stock faible"
             value={stats.lowStock}
-            accentColor={colors.warning}
+            icon="trending-down-outline"
+            tone="warning"
             onPress={() => navigation.navigate('Products', { filter: 'low' })}
           />
         </View>
@@ -78,9 +84,14 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   title: {
-    ...typography.title,
+    ...typography.largeTitle,
     color: colors.text,
-    marginBottom: spacing.lg,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textMuted,
+    marginTop: 2,
+    marginBottom: spacing.xl,
   },
   statsRow: {
     flexDirection: 'row',
@@ -94,10 +105,9 @@ const styles = StyleSheet.create({
   },
   chartCard: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: radii.lg,
     padding: spacing.lg,
+    ...shadows.sm,
   },
   emptyText: {
     ...typography.body,

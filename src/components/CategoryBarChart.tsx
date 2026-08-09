@@ -10,13 +10,18 @@ export default function CategoryBarChart({ data }: CategoryBarChartProps) {
 
   return (
     <View>
-      {data.map((item) => (
+      {data.map((item, index) => (
         <View key={item.category} style={styles.row}>
           <Text style={styles.label} numberOfLines={1}>
             {item.category}
           </Text>
           <View style={styles.track}>
-            <View style={[styles.bar, { width: `${(item.count / maxCount) * 100}%` }]} />
+            <View
+              style={[
+                styles.bar,
+                { width: `${(item.count / maxCount) * 100}%`, opacity: index === 0 ? 1 : 0.5 },
+              ]}
+            />
           </View>
           <Text style={styles.count}>{item.count}</Text>
         </View>
@@ -29,7 +34,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   label: {
     ...typography.caption,
@@ -39,9 +44,9 @@ const styles = StyleSheet.create({
   },
   track: {
     flex: 1,
-    height: 10,
+    height: 8,
     borderRadius: radii.pill,
-    backgroundColor: colors.border,
+    backgroundColor: colors.surfaceAlt,
     overflow: 'hidden',
   },
   bar: {
@@ -50,9 +55,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
   },
   count: {
-    ...typography.caption,
+    ...typography.captionBold,
     color: colors.textMuted,
-    width: 28,
+    width: 24,
     textAlign: 'right',
     marginLeft: spacing.sm,
   },
