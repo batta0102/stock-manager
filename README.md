@@ -10,9 +10,9 @@ Versions utilisées pour le développement :
 
 - Node.js 22.14.0
 - npm 10.9.2
-- Expo SDK 56
-- React Native 0.85.3
-- TypeScript 6.0.3
+- Expo SDK 54
+- React Native 0.81.5
+- TypeScript 5.9.2
 
 Pour tester l'application sur un appareil physique, l'application **Expo Go** doit être installée (disponible sur l'App Store et le Play Store). Un émulateur Android ou un simulateur iOS fonctionnent également.
 
