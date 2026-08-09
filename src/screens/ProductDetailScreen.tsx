@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useLayoutEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -5,7 +6,7 @@ import StatusBadge from '../components/StatusBadge';
 import StockMovementModal from '../components/StockMovementModal';
 import { ProductDetailScreenProps } from '../navigation/types';
 import { useProductStore } from '../store/productStore';
-import { colors, radii, spacing, typography } from '../theme/theme';
+import { colors, radii, shadows, spacing, typography } from '../theme/theme';
 import { getStockStatus } from '../types/product';
 import { formatDateTime } from '../utils/formatDate';
 
@@ -77,33 +78,39 @@ export default function ProductDetailScreen({ route, navigation }: ProductDetail
           <InfoRow label="Dernière mise à jour" value={formatDateTime(product.updatedAt)} last />
         </View>
 
+        <Text style={styles.sectionLabel}>Mouvement de stock</Text>
         <View style={styles.actionsRow}>
           <Pressable
             onPress={() => setMovementDirection('in')}
-            style={({ pressed }) => [styles.actionButton, styles.stockInButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.filledButton, styles.stockInButton, pressed && styles.pressed]}
           >
-            <Text style={styles.stockInButtonText}>Entrée (+)</Text>
+            <Ionicons name="arrow-up-circle-outline" size={18} color={colors.success} />
+            <Text style={[styles.filledButtonText, { color: colors.success }]}>Entrée</Text>
           </Pressable>
           <Pressable
             onPress={() => setMovementDirection('out')}
-            style={({ pressed }) => [styles.actionButton, styles.stockOutButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.filledButton, styles.stockOutButton, pressed && styles.pressed]}
           >
-            <Text style={styles.stockOutButtonText}>Sortie (−)</Text>
+            <Ionicons name="arrow-down-circle-outline" size={18} color={colors.danger} />
+            <Text style={[styles.filledButtonText, { color: colors.danger }]}>Sortie</Text>
           </Pressable>
         </View>
 
+        <Text style={styles.sectionLabel}>Gestion</Text>
         <View style={styles.actionsRow}>
           <Pressable
             onPress={handleEdit}
-            style={({ pressed }) => [styles.actionButton, styles.editButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed]}
           >
-            <Text style={styles.editButtonText}>Modifier</Text>
+            <Ionicons name="create-outline" size={16} color={colors.textMuted} />
+            <Text style={styles.outlineButtonText}>Modifier</Text>
           </Pressable>
           <Pressable
             onPress={handleDelete}
-            style={({ pressed }) => [styles.actionButton, styles.deleteButton, pressed && styles.pressed]}
+            style={({ pressed }) => [styles.outlineButton, pressed && styles.pressed]}
           >
-            <Text style={styles.deleteButtonText}>Supprimer</Text>
+            <Ionicons name="trash-outline" size={16} color={colors.danger} />
+            <Text style={[styles.outlineButtonText, { color: colors.danger }]}>Supprimer</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -146,12 +153,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: spacing.xs,
+    gap: spacing.sm,
   },
   name: {
     ...typography.title,
     color: colors.text,
     flex: 1,
-    marginRight: spacing.sm,
   },
   category: {
     ...typography.caption,
@@ -160,19 +167,18 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: spacing.lg,
+    borderRadius: radii.lg,
+    marginBottom: spacing.xl,
+    ...shadows.sm,
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   infoRowBorder: {
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
   infoLabel: {
@@ -186,47 +192,51 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginLeft: spacing.md,
   },
+  sectionLabel: {
+    ...typography.label,
+    textTransform: 'uppercase',
+    color: colors.textFaint,
+    marginBottom: spacing.sm,
+  },
   actionsRow: {
     flexDirection: 'row',
     gap: spacing.md,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.xl,
   },
-  actionButton: {
+  pressed: {
+    opacity: 0.75,
+  },
+  filledButton: {
     flex: 1,
-    minHeight: 44,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    minHeight: 48,
     borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pressed: {
-    opacity: 0.8,
-  },
-  editButton: {
-    backgroundColor: colors.primaryMuted,
-  },
-  editButtonText: {
+  filledButtonText: {
     ...typography.bodyBold,
-    color: colors.primary,
-  },
-  deleteButton: {
-    backgroundColor: colors.dangerMuted,
-  },
-  deleteButtonText: {
-    ...typography.bodyBold,
-    color: colors.danger,
   },
   stockInButton: {
     backgroundColor: colors.successMuted,
   },
-  stockInButtonText: {
-    ...typography.bodyBold,
-    color: colors.success,
-  },
   stockOutButton: {
-    backgroundColor: colors.warningMuted,
+    backgroundColor: colors.dangerMuted,
   },
-  stockOutButtonText: {
+  outlineButton: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    minHeight: 44,
+    borderRadius: radii.md,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  outlineButtonText: {
     ...typography.bodyBold,
-    color: colors.warning,
+    color: colors.textMuted,
   },
 });
