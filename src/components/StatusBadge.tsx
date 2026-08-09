@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { StockStatus } from '../types/product';
 import { colors, radii, spacing, typography } from '../theme/theme';
+import { StockStatus } from '../types/product';
 
 const STATUS_CONFIG: Record<StockStatus, { label: string; dot: string; background: string; text: string }> = {
   ok: { label: 'En stock', dot: colors.success, background: colors.successMuted, text: colors.success },
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: radii.pill,
     alignSelf: 'flex-start',
   },
@@ -35,9 +35,10 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginRight: spacing.xs,
+    marginRight: 6,
   },
   label: {
     ...typography.label,
+    textTransform: 'uppercase',
   },
 });

@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { colors, radii, shadows, spacing, typography } from '../theme/theme';
 import { getStockStatus, Product } from '../types/product';
-import { colors, radii, spacing, typography } from '../theme/theme';
 import StatusBadge from './StatusBadge';
 
 interface ProductCardProps {
@@ -22,14 +22,16 @@ export default function ProductCard({ product, onPress }: ProductCardProps) {
         </Text>
         <StatusBadge status={status} />
       </View>
-      <Text style={styles.category}>
-        {product.category} · {product.reference}
+      <Text style={styles.meta} numberOfLines={1}>
+        {product.category} · Réf. {product.reference}
       </Text>
+      <View style={styles.divider} />
       <View style={styles.footer}>
-        <Text style={styles.quantity}>
-          Quantité : <Text style={styles.quantityValue}>{product.quantity}</Text>
+        <Text style={styles.metric}>
+          <Text style={styles.metricValue}>{product.quantity}</Text> en stock
         </Text>
-        <Text style={styles.threshold}>Seuil : {product.alertThreshold}</Text>
+        <View style={styles.metricDot} />
+        <Text style={styles.metric}>seuil {product.alertThreshold}</Text>
       </View>
     </Pressable>
   );
@@ -38,47 +40,53 @@ export default function ProductCard({ product, onPress }: ProductCardProps) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.md,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
     marginBottom: spacing.md,
     minHeight: 44,
+    ...shadows.sm,
   },
   cardPressed: {
-    opacity: 0.7,
+    opacity: 0.85,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    marginBottom: 6,
+    gap: spacing.sm,
   },
   name: {
     ...typography.subtitle,
     color: colors.text,
     flex: 1,
-    marginRight: spacing.sm,
   },
-  category: {
+  meta: {
     ...typography.caption,
     color: colors.textMuted,
-    marginBottom: spacing.sm,
+  },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border,
+    marginVertical: spacing.md,
   },
   footer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  quantity: {
-    ...typography.body,
+  metric: {
+    ...typography.caption,
     color: colors.textMuted,
   },
-  quantityValue: {
+  metricValue: {
+    ...typography.captionBold,
     color: colors.text,
-    fontWeight: '600',
   },
-  threshold: {
-    ...typography.body,
-    color: colors.textMuted,
+  metricDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: colors.textFaint,
+    marginHorizontal: spacing.sm,
   },
 });
