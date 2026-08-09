@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   submitButton: {
-    minHeight: 44,
+    minHeight: 48,
     borderRadius: radii.md,
     backgroundColor: colors.primary,
     alignItems: 'center',
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   submitButtonPressed: {
-    opacity: 0.85,
+    backgroundColor: colors.primaryDark,
   },
   submitButtonText: {
     ...typography.bodyBold,

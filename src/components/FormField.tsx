@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 import { colors, radii, spacing, typography } from '../theme/theme';
 
@@ -6,14 +7,38 @@ interface FormFieldProps extends TextInputProps {
   error?: string;
 }
 
-export default function FormField({ label, error, style, multiline, ...inputProps }: FormFieldProps) {
+export default function FormField({
+  label,
+  error,
+  style,
+  multiline,
+  onFocus,
+  onBlur,
+  ...inputProps
+}: FormFieldProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={styles.field}>
       <Text style={styles.label}>{label}</Text>
       <TextInput
-        placeholderTextColor={colors.textMuted}
+        placeholderTextColor={colors.textFaint}
         multiline={multiline}
-        style={[styles.input, multiline && styles.textArea, error && styles.inputError, style]}
+        onFocus={(event) => {
+          setIsFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setIsFocused(false);
+          onBlur?.(event);
+        }}
+        style={[
+          styles.input,
+          multiline && styles.textArea,
+          isFocused && styles.inputFocused,
+          error && styles.inputError,
+          style,
+        ]}
         {...inputProps}
       />
       {error && <Text style={styles.error}>{error}</Text>}
@@ -33,12 +58,15 @@ const styles = StyleSheet.create({
   input: {
     minHeight: 44,
     borderRadius: radii.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: colors.border,
     paddingHorizontal: spacing.md,
     backgroundColor: colors.surface,
     ...typography.body,
     color: colors.text,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
   },
   textArea: {
     minHeight: 88,
