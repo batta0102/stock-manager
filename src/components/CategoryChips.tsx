@@ -42,6 +42,7 @@ function Chip({ label, active, onPress }: { label: string; active: boolean; onPr
 
 const styles = StyleSheet.create({
   container: {
+    alignItems: 'flex-start',
     paddingHorizontal: spacing.lg,
     gap: spacing.sm,
     paddingBottom: spacing.md,
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   chip: {
     flexShrink: 0,
     flexDirection: 'row',
-    minHeight: 44,
+    height: 44,
     paddingHorizontal: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
