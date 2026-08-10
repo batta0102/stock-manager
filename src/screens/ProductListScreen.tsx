@@ -112,6 +112,7 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
       )}
       <FlatList
         key={listKey}
+        style={styles.list}
         data={filteredProducts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ProductCard product={item} onPress={handlePressProduct} />}
@@ -217,6 +218,9 @@ const styles = StyleSheet.create({
   filterBannerClear: {
     ...typography.bodyBold,
     color: colors.primary,
+  },
+  list: {
+    flex: 1,
   },
   listContent: {
     paddingHorizontal: spacing.lg,
