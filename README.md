@@ -104,13 +104,3 @@ src/
     useDebouncedValue.ts
 App.tsx
 ```
-
-## Captures à réaliser
-
-Pour compléter la section captures d'écran ci-dessus, il faudrait ajouter dans `docs/screenshots/` :
-
-- `product-list.png` : la liste des produits avec la barre de recherche et les filtres par catégorie visibles.
-- `product-detail.png` : le détail d'un produit (idéalement un produit en stock faible ou en rupture, pour voir le badge de statut).
-- `dashboard.png` : le tableau de bord avec les cartes de statistiques et le graphique par catégorie.
-- `product-form.png` : le formulaire de création/édition, avec si possible une erreur de validation visible sur un champ.
-- `stock-movement.png` : la modale de mouvement de stock (entrée ou sortie) ouverte.
