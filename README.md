@@ -42,11 +42,11 @@ Aucune configuration supplémentaire n'est nécessaire : toutes les données son
 
 | Liste des produits | Détail produit | Tableau de bord |
 | --- | --- | --- |
-| ![Liste des produits](docs/screenshots/product-list.png) | ![Détail produit](docs/screenshots/product-detail.png) | ![Tableau de bord](docs/screenshots/dashboard.png) |
+| ![Liste des produits](docs/screenshots/product-list.jpg) | ![Détail produit](docs/screenshots/product-detail.jpg) | ![Tableau de bord](docs/screenshots/dashboard.jpg) |
 
 | Formulaire produit | Mouvement de stock |
 | --- | --- |
-| ![Formulaire produit](docs/screenshots/product-form.png) | ![Mouvement de stock](docs/screenshots/stock-movement.png) |
+| ![Formulaire produit](docs/screenshots/product-form.jpg) | ![Mouvement de stock](docs/screenshots/stock-movement.jpg) |
 
 ## Choix techniques
 
