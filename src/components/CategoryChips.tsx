@@ -12,6 +12,7 @@ export default function CategoryChips({ categories, selected, onSelect }: Catego
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      style={styles.scrollView}
       contentContainerStyle={styles.container}
     >
       <Chip label="Tous" active={selected === null} onPress={() => onSelect(null)} />
@@ -41,6 +42,11 @@ function Chip({ label, active, onPress }: { label: string; active: boolean; onPr
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 0,
+    flexShrink: 0,
+    height: 44 + spacing.md,
+  },
   container: {
     alignItems: 'flex-start',
     paddingHorizontal: spacing.lg,
