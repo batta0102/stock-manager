@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CategoryChips from '../components/CategoryChips';
@@ -21,6 +21,7 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [stockFilter, setStockFilter] = useState<'low' | 'out' | null>(null);
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
+  const listRef = useRef<FlatList<Product>>(null);
 
   useEffect(() => {
     const filter = route.params?.filter;
@@ -50,6 +51,10 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
   }, [products, debouncedQuery, selectedCategory, stockFilter]);
 
   const hasActiveFilters = selectedCategory !== null || stockFilter !== null || searchQuery.trim().length > 0;
+
+  useEffect(() => {
+    listRef.current?.scrollToOffset({ offset: 0, animated: false });
+  }, [selectedCategory, stockFilter, debouncedQuery]);
 
   const handlePressProduct = useCallback(
     (product: Product) => {
@@ -110,6 +115,7 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
         </View>
       )}
       <FlatList
+        ref={listRef}
         data={filteredProducts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ProductCard product={item} onPress={handlePressProduct} />}
