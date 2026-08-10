@@ -117,6 +117,9 @@ export default function ProductListScreen({ navigation, route }: ProductsScreenP
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <ProductCard product={item} onPress={handlePressProduct} />}
         contentContainerStyle={styles.listContent}
+        contentInsetAdjustmentBehavior="never"
+        automaticallyAdjustContentInsets={false}
+        automaticallyAdjustsScrollIndicatorInsets={false}
         ListEmptyComponent={
           <View style={styles.empty}>
             <View style={styles.emptyIconWrap}>
